@@ -10,6 +10,8 @@
 
 int main(int argc, const char * argv[])
 {
+  NSString *lowerName = @"";
+  
   @autoreleasepool
   {
     // Read in a file as a huge string, without error checking
@@ -18,18 +20,28 @@ int main(int argc, const char * argv[])
     // break it into an array of strings
     NSArray *names = [nameString componentsSeparatedByString:@"\n"];
     
-    // Go through the array one string at a time
+    // get the list of words as a really long string
+    NSString *wordString = [NSString stringWithContentsOfFile:@"/usr/share/dict/words" encoding:NSUTF8StringEncoding error:NULL];
+    
+    // break it up into an array of words
+    NSArray *words = [wordString componentsSeparatedByString:@"\n"];
+    
+    // Go through the array of proper names one string at a time and see if it's in the array of words
     for (NSString *n in names)
     {
-      // Look for the string "aa", without considering case
-      NSRange r = [n rangeOfString:@"AA" options:NSCaseInsensitiveSearch];
-      
-      // was it found?
-      if (r.location != NSNotFound)
+      lowerName = [n lowercaseString]; // looking for words, not names, so change name to all lower-case
+      for (NSString *w in words)
       {
-        NSLog(@"%@", n);
-      }
+        // do they match?
+        if ([lowerName isEqualToString:w]) // if true, then it's a match
+        {
+            NSLog(@"%@", w);
+        }
+        
+      } // for w
+      
     } // for n
+    
   } // autoreleasepool
     return 0;
 } // main()
